@@ -1,3 +1,13 @@
+
+# include important headers for nanosvg
+cdef extern from '<math.h>':
+    pass
+cdef extern from '<string.h>':
+    pass
+cdef extern from '<stdio.h>':
+    pass
+
+
 cdef extern from 'nanosvg.h':
 
     cdef enum NSVGpaintType:
