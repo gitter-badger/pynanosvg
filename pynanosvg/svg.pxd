@@ -100,13 +100,50 @@ cdef extern from 'nanosvg.h':
 
 
 cdef extern from 'nanosvgrast.h':
+    cdef struct NSVGedge:
+        pass
+        
+    cdef struct NSVGpoint:
+        pass
+        
+    cdef struct NSVGactiveEdge:
+        pass
+    
+    cdef struct NSVGmemPage:
+        pass
+        
+    cdef struct NSVGrasterizer:
+        float px, py
+        float tessTol
+        float distTol
 
-    ctypedef struct NSVGrasterizer
+        NSVGedge* edges
+        int nedges
+        int cedges
+
+        NSVGpoint* points
+        int npoints
+        int cpoints
+
+        NSVGpoint* points2
+        int npoints2
+        int cpoints2
+    
+        NSVGactiveEdge* freelist
+        NSVGmemPage* pages
+        NSVGmemPage* curpage
+    
+        unsigned char* scanline
+        int cscanline
+    
+        unsigned char* bitmap
+        int width, height, stride
+
 
     NSVGrasterizer* nsvgCreateRasterizer()
 
     void nsvgRasterize(NSVGrasterizer* r,
-				   NSVGimage* image, float tx, float ty, float scale,
-				   unsigned char* dst, int w, int h, int stride)
+                   NSVGimage* image, float tx, float ty, float scale,
+                   unsigned char* dst, int w, int h, int stride)
 
     void nsvgDeleteRasterizer(NSVGrasterizer*)
