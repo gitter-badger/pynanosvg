@@ -1,4 +1,4 @@
-# cysvg
+# pynanosvg
 
 A work in progress wrapping of [nanosvg](https://github.com/memononen/nanosvg) using Cython.
 The implementation of NSVGImage class is thanks to @rezrov.
@@ -19,3 +19,4 @@ img.parse_file('/path/to/svg', '96px')
 # the x offset and y offset from the origin in the upper left.
 img_bytes = img.rasterize(0,0,1.0,640, 480)
 # from here, you can load the bytes into, eg a PIL Image, or perhaps Pygame's image?
+```
