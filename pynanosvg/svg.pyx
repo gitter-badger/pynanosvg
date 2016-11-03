@@ -1,53 +1,67 @@
-from libc.stdlib cimport malloc, free
-from cpython.mem cimport PyMem_Malloc, PyMem_Free
-cimport svg
+cimport nanosvg
 
-import warnings
+cdef class NSVGImage:
+    """Cython interface to nanosvg for parsing and rendering SVG images."""
+    cdef nanosvg.NSVGimage* _c_nsvgimage
+    cdef nanosvg.NSVGrasterizer* _c_nsvgrasterizer
 
-class SvgInitializationError(RuntimeError):
-    """Error raised when the initialization of the SVG fails"""
-    pass
-
-
-cdef class Svg:
-    cdef svg.NSVGimage* image
-    cdef svg.NSVGrasterizer* rast
-    cdef unsigned char* out_image
     def __cinit__(self):
-        self.image = NULL
-        self.rast = NULL
+        self._c_nsvgrasterizer = nanosvg.nsvgCreateRasterizer()
+        self._c_nsvgimage = NULL
+
+    def parse_file(self, filename, dpi):
+        """Reads and parses an SVG file. Units must be one of 'px', 'pt',
+        'pc' 'mm', 'cm', or 'in'."""
+        _filename = filename.encode('UTF-8')
+        _units = dpi[-2:].encode('UTF-8')
+        self._c_nsvgimage = nanosvg.nsvgParseFromFile(_filename, _units, float(dpi[:-2]))
+        return self._c_nsvgimage != NULL
+
+    def width(self):
+        """Returns the width of the parsed image."""
+        if self._c_nsvgimage == NULL:
+            return 0
+        return self._c_nsvgimage.width
+
+    def height(self):
+        """Returns the height of the parsed image."""
+        if self._c_nsvgimage == NULL:
+            return 0
+        return self._c_nsvgimage.height
+
+    def rasterize(self, tx, ty, scale, w, h):
+        """Returns a bytes object containing a rasterized rgba bitmap
+        of the parsed SVG image."""
+        if self._c_nsvgimage == NULL:
+            return None
+        w = int(w)
+        h = int(h)
+        _len = w * h * 4
+        _stride = w * 4
+        _buf = bytes(_len)
+        nanosvg.nsvgRasterize(self._c_nsvgrasterizer,
+                                 self._c_nsvgimage, tx, ty, scale,
+                                 _buf, w, h, _stride)
+        #print("NSVGImage: Rasterized image to bytes(", _len, ") with id ", id(_buf))
+        return _buf
+
+    def rasterize_to_buffer(self, tx, ty, scale, w, h, stride, buffer):
+        """Places a rasterized rgba bitmap into a pre-allocated bytes
+        object buffer. The buffer should be of size w * h * 4, and
+        stride is generally w * 4."""
+        if type(buffer) is not bytes:
+            return False
+        if self._c_nsvgimage == NULL:
+            return False
+        nanosvg.nsvgRasterize(self._c_nsvgrasterizer,
+                                 self._c_nsvgimage, tx, ty, scale,
+                                 buffer, w, h, stride)
+        #print("NSVGImage: Rasterized image to buffer with id ", id(buffer))
+        return buffer
 
     def __dealloc__(self):
-        # remove the rasterizer and image to not leak memory
-        svg.nsvgDelete(self.image)
-        svg.nsvgDeleteRasterizer(self.rast)
-
-    def __init__(self):
-        pass
-
-    cpdef void parse(self, file_path=None, svg_str=None, units=b'px', dpi=96):
-        if file_path:
-            self.image = svg.nsvgParseFromFile(<bytes> file_path, <bytes> units, dpi)
-            if not self.image:
-                raise SvgInitializationError(b'Failed to parse the SVG at %s' % file_path)
-        else:
-            self.image = svg.nsvgParse(<bytes> svg_str, <bytes> units, dpi)
-            if not self.image:
-                raise SvgInitializationError(b'Failed to create SVG based on the provided text')
-
-    cpdef bytes rasterize(self,int tx, int ty, float scale, int w, int h):
-        # for our RGBA image, we allocate 4 bytes per pixel
-        self.out_image = <unsigned char*> PyMem_Malloc(w*h*4)
-        if not self.out_image:
-            raise MemoryError()
-        try:
-            self.rast = nsvgCreateRasterizer()
-            # stride is 4 for RGBA
-            svg.nsvgRasterize(self.rast, self.image, tx, ty, scale, self.out_image, w, h, w*4)
-            # convert C string to python string to be GC'd so we can free out_image
-            return self.out_image
-        finally:
-            PyMem_Free(self.out_image)
-
-
-
+        if self._c_nsvgrasterizer != NULL:
+            nanosvg.nsvgDeleteRasterizer(self._c_nsvgrasterizer)
+        if self._c_nsvgimage != NULL:
+            nanosvg.nsvgDelete(self._c_nsvgimage)
+        #print("NSVGImage: Deallocating ", id(self))

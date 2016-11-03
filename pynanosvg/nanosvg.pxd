@@ -1,12 +1,3 @@
-from libcpp cimport bool
-# include important headers for nanosvg
-cdef extern from '<math.h>':
-    pass
-cdef extern from '<string.h>':
-    pass
-cdef extern from '<stdio.h>':
-    pass
-
 # this is a work around to get the NANOSVG_IMPLEMENTATION to be defined
 cdef extern from 'defines.h':
     cdef int NANOSVG_IMPLEMENTATION
