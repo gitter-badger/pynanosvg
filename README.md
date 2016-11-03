@@ -14,7 +14,7 @@ from svg import NSVGImage
 
 img = NSVGImage()
 # parse the svg at 96 dpi, dpi is 'dots per inch', the units can be 'px', 'pt', 'pc' 'mm', 'cm', or 'in'
-img.parse_file('/path/to/svg')
+img.parse_file('/path/to/svg', '96px')
 # rasterize the svg to an image that is 1.0 scaled and of size 640x480, the first two arugments are
 # the x offset and y offset from the origin in the upper left.
 img_bytes = img.rasterize(0,0,1.0,640, 480)
