@@ -8,6 +8,10 @@ __pycache__/
 # C extensions
 *.so
 
+#ignore cython generated files
+pynanosvg/*.c
+
+
 # Distribution / packaging
 .Python
 env/

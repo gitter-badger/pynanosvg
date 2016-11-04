@@ -20,3 +20,7 @@ img.parse_file('/path/to/svg', '96px')
 img_bytes = img.rasterize(0,0,1.0,640, 480)
 # from here, you can load the bytes into, eg a PIL Image, or perhaps Pygame's image?
 ```
+
+## Tests
+
+Tests are located in the `tests` directory. To run them from the `tests` directory, just run `pytest`. (You may need to install pynanosvg first)
