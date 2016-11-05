@@ -1,10 +1,5 @@
 environment:
 
-  global:
-    password: 
-      secure: f5/BYn3r6+mnHmEyQLswJ8T8xgiBTqKUKnMDN0OVI69yWD2Sm+TkM5jbCpATbYZL
-    
-
   matrix:
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.0"
@@ -34,11 +29,3 @@ build_script:
 test_script:
   - "cd tests"
   - "%PYTHON%\\Scripts\\pytest"
-  - "cd .."
-
-deploy_script:
-    - "echo [pypi] > %USERPROFILE%\\.pypirc"
-    - "echo username:ethanhs >> %USERPROFILE%\\.pypirc"
-    - "echo password:%password% >> %USERPROFILE%\\.pypirc"
-    - "%PYTHON%\\python setup.py sdist bdist_wheel upload"
-
