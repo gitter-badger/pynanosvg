@@ -1,11 +1,6 @@
 environment:
 
   global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
-    WITH_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
-    
     password: 
       secure: f5/BYn3r6+mnHmEyQLswJ8T8xgiBTqKUKnMDN0OVI69yWD2Sm+TkM5jbCpATbYZL
     
@@ -32,6 +27,7 @@ init:
   - "ECHO Python %PYTHON_VERSION% (%PYTHON_ARCH%bit) from %PYTHON%"       
 
 install:
+  - "%PYTHON%\\python -m pip install --upgrade pip"
   - "%PYTHON%\\Scripts\\pip.exe --version"
   - "%PYTHON%\\Scripts\\pip install wheel"
   - "%PYTHON%\\Scripts\\wheel.exe version"
@@ -40,7 +36,7 @@ install:
 
 build: off
 build_script:
-- "%WITH_ENV% %PYTHON%\\python.exe setup.py install"
+- "%PYTHON%\\python.exe setup.py install"
 test_script:
   - "cd tests"
   - "pytest"
