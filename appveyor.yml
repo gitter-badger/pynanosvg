@@ -34,7 +34,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install pytest"
   - "%PYTHON%\\Scripts\\pip install cython"
   # we need to get nanosvg
-  - "git submodule update ."
+  - "git submodule update --init ."
 
 build: off
 build_script:
