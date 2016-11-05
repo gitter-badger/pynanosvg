@@ -33,12 +33,12 @@ build_script:
 - "%PYTHON%\\python.exe setup.py install"
 test_script:
   - "cd tests"
-  - "%PYTHON\\Scripts\\pytest"
+  - "%PYTHON%\\Scripts\\pytest"
   - "cd .."
 
 deploy_script:
     - "echo [pypi] > %USERPROFILE%\\.pypirc"
     - "echo username:ethanhs >> %USERPROFILE%\\.pypirc"
     - "echo password:%password% >> %USERPROFILE%\\.pypirc"
-    - "%PYTHON\\python setup.py sdist bdist_wheel upload"
+    - "%PYTHON%\\python setup.py sdist bdist_wheel upload"
 
