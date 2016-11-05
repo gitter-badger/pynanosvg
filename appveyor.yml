@@ -33,8 +33,8 @@ install:
   - "%PYTHON%\\Scripts\\wheel.exe version"
   - "%PYTHON%\\Scripts\\pip install pytest"
   - "%PYTHON%\\Scripts\\pip install cython"
-  # we need to install nanosvg
-  - "git submodule update --recursive"
+  # we need to get nanosvg
+  - "git submodule update ."
 
 build: off
 build_script:
@@ -46,7 +46,7 @@ test_script:
 
 deploy_script:
     - "echo [pypi] > %USERPROFILE%\\.pypirc"
-    - "echo username: IronManMark20 >> %USERPROFILE%\\.pypirc"
-    - "echo password: %password% >> %USERPROFILE%\\.pypirc"
+    - "echo username:ethanhs >> %USERPROFILE%\\.pypirc"
+    - "echo password:%password% >> %USERPROFILE%\\.pypirc"
     - python setup.py sdist bdist_wheel upload
 
